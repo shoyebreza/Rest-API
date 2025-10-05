@@ -3,6 +3,7 @@
 namespace App\Http\Controllers;
 
 use App\Http\Requests\StoreAuthorRequest;
+use App\Http\Resources\AuthorResource;
 use App\Models\Author;
 use Illuminate\Http\Request;
 
@@ -13,11 +14,19 @@ class AuthorController extends Controller
      */
     public function index()
     {
-        $authors  = Author::paginate(10);
-        return response()->json([
+        $authors  = Author::with('book')->paginate(10);
+
+        /* $authors  = Author::paginate(10); */
+
+        return AuthorResource::collection($authors);
+
+
+        /* return response()->json([
             'authors' =>$authors,
             'message' =>'author fached success'
-        ],200);
+        ],200); */
+
+
 
     }
 
@@ -53,7 +62,9 @@ class AuthorController extends Controller
      */
     public function show(Author $author)
     {
-        //
+        /* $author = Author::find($id); */
+
+        return new AuthorResource($author);
     }
 
     /**
@@ -67,9 +78,11 @@ class AuthorController extends Controller
     /**
      * Update the specified resource in storage.
      */
-    public function update(Request $request, Author $author)
+    public function update(StoreAuthorRequest $request, Author $author)
     {
-        //
+        $author->update($request->validated());
+
+        return new AuthorResource($author);
     }
 
     /**
@@ -77,6 +90,10 @@ class AuthorController extends Controller
      */
     public function destroy(Author $author)
     {
-        //
+        $author->delete();
+
+        return response()->json([
+            'message'=>'Data deleted successfully!'
+        ]);
     }
 }

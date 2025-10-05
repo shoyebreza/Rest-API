@@ -20,7 +20,7 @@ class Book extends Model
         'description',
         'author_id',
         'genre',
-        'published_date',
+        'published_at',
         'total_copies',
         'available_copies',
         'price',
