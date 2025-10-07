@@ -83,6 +83,16 @@ class MemberController extends Controller
      */
     public function destroy(Member $member)
     {
-        //
+        if($member->activeBorrowings()->count() > 0){
+            return response()->json([
+                'message' => 'Cannot delete member with active borrowing',
+            ]);
+        }
+
+        $member->delete();
+
+        return response()->json([
+            'message' => 'Member deleted with success'
+        ]);
     }
 }
